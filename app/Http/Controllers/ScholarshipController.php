@@ -3,62 +3,134 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Scholarship;
+use App\Models\University;
 
 class ScholarshipController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of scholarships.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Scholarship::active()->notExpired()->with('university');
+
+        // Apply filters
+        if ($request->filled('country')) {
+            $query->forCountry($request->country);
+        }
+
+        if ($request->filled('program')) {
+            $query->forProgram($request->program);
+        }
+
+        if ($request->filled('coverage')) {
+            $query->byCoverage($request->coverage);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('provider', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply sorting
+        $sortBy = $request->get('sort', 'application_deadline');
+        $sortOrder = $request->get('order', 'asc');
+        
+        if ($sortBy === 'amount') {
+            $query->orderBy('amount', $sortOrder);
+        } elseif ($sortBy === 'deadline') {
+            $query->orderBy('application_deadline', $sortOrder);
+        } elseif ($sortBy === 'title') {
+            $query->orderBy('title', $sortOrder);
+        } else {
+            $query->orderBy('application_deadline', 'asc');
+        }
+
+        $scholarships = $query->paginate(12);
+
+        // Get unique countries, programs, and coverage types for filters
+        $countries = Scholarship::active()
+            ->get()
+            ->pluck('countries_eligible')
+            ->flatten()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $programs = Scholarship::active()
+            ->get()
+            ->pluck('programs_covered')
+            ->flatten()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $coverageTypes = Scholarship::active()
+            ->distinct()
+            ->pluck('coverage')
+            ->filter()
+            ->sort()
+            ->values();
+
+        return view('scholarships.index', compact('scholarships', 'countries', 'programs', 'coverageTypes'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified scholarship.
      */
-    public function create()
+    public function show(Scholarship $scholarship)
     {
-        //
+        $scholarship->load('university');
+        return view('scholarships.show', compact('scholarship'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Search scholarships.
      */
-    public function store(Request $request)
+    public function search(Request $request)
     {
-        //
+        $query = Scholarship::active()->notExpired()->with('university');
+
+        if ($request->filled('q')) {
+            $search = $request->q;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('provider', 'like', "%{$search}%");
+            });
+        }
+
+        $scholarships = $query->limit(10)->get();
+
+        return response()->json($scholarships);
     }
 
     /**
-     * Display the specified resource.
+     * Show eligibility check form.
      */
-    public function show(string $id)
+    public function eligibilityCheck()
     {
-        //
-    }
+        $countries = Scholarship::active()
+            ->get()
+            ->pluck('countries_eligible')
+            ->flatten()
+            ->unique()
+            ->sort()
+            ->values();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        $programs = Scholarship::active()
+            ->get()
+            ->pluck('programs_covered')
+            ->flatten()
+            ->unique()
+            ->sort()
+            ->values();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('scholarships.eligibility-check', compact('countries', 'programs'));
     }
 }

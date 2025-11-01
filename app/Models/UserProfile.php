@@ -72,6 +72,14 @@ class UserProfile extends Model
     }
 
     /**
+     * Get the university name.
+     */
+    public function getUniversityAttribute(): string
+    {
+        return $this->current_university ?? '';
+    }
+
+    /**
      * Scope a query to only include mentors.
      */
     public function scopeMentors($query)
