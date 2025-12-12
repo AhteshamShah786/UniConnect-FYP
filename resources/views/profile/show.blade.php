@@ -103,7 +103,7 @@
                     <div class="card-elevated p-6">
                         <div class="text-center">
                             @if($user->profile && $user->profile->profile_picture)
-                            <img src="{{ $user->profile->profile_picture }}" 
+                            <img src="{{ asset('storage/' . $user->profile->profile_picture) }}" 
                                  alt="{{ $user->name }}" 
                                  class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
                             @else

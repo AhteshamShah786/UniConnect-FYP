@@ -1,4 +1,5 @@
 import './bootstrap';
+import './auth-state';
 
 import Alpine from 'alpinejs';
 

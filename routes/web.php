@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::match(['put', 'patch'], '/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/profile/upload-photo', [ProfileController::class, 'uploadPhoto'])->name('profile.upload-photo');
+    Route::get('/download/{file}', [ProfileController::class, 'downloadFile'])->name('download.file');
     
     // Networking routes (auth required for create/edit/delete)
     Route::post('/networking', [NetworkingController::class, 'store'])->name('networking.store');
@@ -54,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Chatbot routes
-Route::post('/chatbot/message', [ChatbotController::class, 'sendMessage'])->name('chatbot.message');
+Route::post('/chatbot/message', [ChatbotController::class, 'sendMessage'])->middleware('throttle:30,1')->name('chatbot.message');
 Route::get('/chatbot/languages', [ChatbotController::class, 'getLanguages'])->name('chatbot.languages');
 
 // Admin routes

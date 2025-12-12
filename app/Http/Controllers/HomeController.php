@@ -14,26 +14,35 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $featuredUniversities = University::active()
-            ->whereNotNull('qs_ranking')
-            ->orderBy('qs_ranking')
-            ->limit(6)
-            ->get();
+        try {
+            $featuredUniversities = University::active()
+                ->whereNotNull('qs_ranking')
+                ->orderBy('qs_ranking')
+                ->limit(6)
+                ->get();
 
-        $recentScholarships = Scholarship::active()
-            ->notExpired()
-            ->with('university')
-            ->orderBy('created_at', 'desc')
-            ->limit(6)
-            ->get();
+            $recentScholarships = Scholarship::active()
+                ->notExpired()
+                ->with('university')
+                ->orderBy('created_at', 'desc')
+                ->limit(6)
+                ->get();
 
-        $featuredPosts = NetworkingPost::featured()
-            ->with('userProfile')
-            ->orderBy('created_at', 'desc')
-            ->limit(3)
-            ->get();
+            $featuredPosts = NetworkingPost::featured()
+                ->with('userProfile')
+                ->orderBy('created_at', 'desc')
+                ->limit(3)
+                ->get();
 
-        return view('home', compact('featuredUniversities', 'recentScholarships', 'featuredPosts'));
+            return view('home', compact('featuredUniversities', 'recentScholarships', 'featuredPosts'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Home page load error: ' . $e->getMessage());
+            return view('home', [
+                'featuredUniversities' => collect(),
+                'recentScholarships' => collect(),
+                'featuredPosts' => collect(),
+            ])->with('warning', 'Some content could not be loaded.');
+        }
     }
 
     /**

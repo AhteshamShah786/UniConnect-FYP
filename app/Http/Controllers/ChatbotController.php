@@ -12,32 +12,44 @@ class ChatbotController extends Controller
      */
     public function sendMessage(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string|max:1000',
-            'language' => 'nullable|string|in:en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi',
-        ]);
+        try {
+            $request->validate([
+                'message' => 'required|string|max:1000',
+                'language' => 'nullable|string|in:en,es,fr,de,it,pt,ru,zh,ja,ko,ar,hi',
+            ]);
 
-        $language = $request->get('language', 'en');
-        $message = $request->get('message');
+            $language = $request->get('language', 'en');
+            $message = $request->get('message');
 
-        // For now, return a simple response
-        // In a real implementation, you would integrate with an AI service
-        $response = $this->generateResponse($message, $language);
+            // For now, return a simple response
+            // In a real implementation, you would integrate with an AI service
+            $response = $this->generateResponse($message, $language);
 
-        // Store the conversation if user is authenticated
-        if (auth()->check()) {
-            ChatbotConversation::create([
-                'user_id' => auth()->id(),
-                'message' => $message,
+            // Store the conversation if user is authenticated
+            if (auth()->check()) {
+                try {
+                    ChatbotConversation::create([
+                        'user_id' => auth()->id(),
+                        'message' => $message,
+                        'response' => $response,
+                        'language' => $language,
+                    ]);
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Chatbot conversation save error: ' . $e->getMessage());
+                    // Continue even if save fails
+                }
+            }
+
+            return response()->json([
                 'response' => $response,
                 'language' => $language,
             ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Chatbot error: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'An error occurred while processing your message.',
+            ], 500);
         }
-
-        return response()->json([
-            'response' => $response,
-            'language' => $language,
-        ]);
     }
 
     /**

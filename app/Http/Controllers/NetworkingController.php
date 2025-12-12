@@ -60,38 +60,44 @@ class NetworkingController extends Controller
      */
     public function store(Request $request)
     {
-        // Enhanced validation with custom messages
-        $validated = $request->validate([
-            'title' => 'required|string|max:255|min:5',
-            'content' => 'required|string|min:10',
-            'post_type' => 'required|in:question,experience,advice,announcement',
-        ], [
-            'title.required' => 'Post title is required.',
-            'title.min' => 'Title must be at least 5 characters.',
-            'title.max' => 'Title cannot exceed 255 characters.',
-            'content.required' => 'Post content is required.',
-            'content.min' => 'Content must be at least 10 characters.',
-            'post_type.required' => 'Please select a post type.',
-            'post_type.in' => 'Invalid post type selected.',
-        ]);
+        try {
+            // Enhanced validation with custom messages
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|min:5',
+                'content' => 'required|string|min:10',
+                'post_type' => 'required|in:question,experience,advice,announcement',
+            ], [
+                'title.required' => 'Post title is required.',
+                'title.min' => 'Title must be at least 5 characters.',
+                'title.max' => 'Title cannot exceed 255 characters.',
+                'content.required' => 'Post content is required.',
+                'content.min' => 'Content must be at least 10 characters.',
+                'post_type.required' => 'Please select a post type.',
+                'post_type.in' => 'Invalid post type selected.',
+            ]);
 
-        $userProfile = UserProfile::where('user_id', Auth::id())->first();
-        
-        if (!$userProfile) {
-            return redirect()->route('profile.edit')
-                ->with('error', 'Please complete your profile first before creating posts.');
+            $userProfile = UserProfile::where('user_id', Auth::id())->first();
+            
+            if (!$userProfile) {
+                return redirect()->route('profile.edit')
+                    ->with('error', 'Please complete your profile first before creating posts.');
+            }
+
+            NetworkingPost::create([
+                'user_id' => Auth::id(),
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'post_type' => $validated['post_type'],
+                'is_featured' => false,
+            ]);
+
+            return redirect()->route('networking.index')
+                ->with('success', 'Post created successfully!');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Post creation error: ' . $e->getMessage());
+            return redirect()->route('networking.index')
+                ->with('error', 'Failed to create post. Please try again.');
         }
-
-        NetworkingPost::create([
-            'user_id' => Auth::id(),
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'post_type' => $validated['post_type'],
-            'is_featured' => false,
-        ]);
-
-        return redirect()->route('networking.index')
-            ->with('success', 'Post created successfully!');
     }
 
     /**
@@ -121,27 +127,33 @@ class NetworkingController extends Controller
      */
     public function update(Request $request, NetworkingPost $post)
     {
-        $this->authorize('update', $post);
+        try {
+            $this->authorize('update', $post);
 
-        // Enhanced validation with custom messages
-        $validated = $request->validate([
-            'title' => 'required|string|max:255|min:5',
-            'content' => 'required|string|min:10',
-            'post_type' => 'required|in:question,experience,advice,announcement',
-        ], [
-            'title.required' => 'Post title is required.',
-            'title.min' => 'Title must be at least 5 characters.',
-            'title.max' => 'Title cannot exceed 255 characters.',
-            'content.required' => 'Post content is required.',
-            'content.min' => 'Content must be at least 10 characters.',
-            'post_type.required' => 'Please select a post type.',
-            'post_type.in' => 'Invalid post type selected.',
-        ]);
+            // Enhanced validation with custom messages
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|min:5',
+                'content' => 'required|string|min:10',
+                'post_type' => 'required|in:question,experience,advice,announcement',
+            ], [
+                'title.required' => 'Post title is required.',
+                'title.min' => 'Title must be at least 5 characters.',
+                'title.max' => 'Title cannot exceed 255 characters.',
+                'content.required' => 'Post content is required.',
+                'content.min' => 'Content must be at least 10 characters.',
+                'post_type.required' => 'Please select a post type.',
+                'post_type.in' => 'Invalid post type selected.',
+            ]);
 
-        $post->update($validated);
+            $post->update($validated);
 
-        return redirect()->route('networking.show', $post)
-            ->with('success', 'Post updated successfully!');
+            return redirect()->route('networking.show', $post)
+                ->with('success', 'Post updated successfully!');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Post update error: ' . $e->getMessage());
+            return redirect()->route('networking.edit', $post)
+                ->with('error', 'Failed to update post. Please try again.');
+        }
     }
 
     /**

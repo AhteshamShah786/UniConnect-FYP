@@ -79,6 +79,12 @@
                                     @csrf
                                     <x-dropdown-link :href="route('logout')"
                                             onclick="event.preventDefault();
+                                                        // Mark user as logged out in localStorage
+                                                        if (window.AuthStateManager) {
+                                                            window.AuthStateManager.setLoggedOut();
+                                                        } else {
+                                                            localStorage.setItem('uniconnect_auth_state', JSON.stringify({loggedOut: true, timestamp: Date.now()}));
+                                                        }
                                                         this.closest('form').submit();"
                                             class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
                                         <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
