@@ -1,0 +1,35 @@
+═══════════════════════════════════════════════════════════════
+   UniConnect - Quick Start Guide
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Open PowerShell/Terminal in UniConnect folder
+
+STEP 2: Run these commands ONE BY ONE:
+
+    composer install
+    npm install
+    php artisan key:generate
+    php artisan migrate
+    php artisan db:seed --class=AdminUserSeeder
+    npm run build
+    php artisan serve
+
+STEP 3: Open your browser and go to:
+    http://127.0.0.1:8000
+
+STEP 4: To access Admin Panel:
+    URL: http://127.0.0.1:8000/admin/login
+    Email: ghulammustafa.bscsf22@iba-suk.edu.pk
+    Password: ghulam786@
+
+═══════════════════════════════════════════════════════════════
+   IMPORTANT NOTES:
+═══════════════════════════════════════════════════════════════
+
+✓ Keep the terminal open while "php artisan serve" is running
+✓ If you see errors, check RUN_INSTRUCTIONS.md for troubleshooting
+✓ Admin user is created automatically in step 5
+✓ All changes are saved and ready to use
+
+═══════════════════════════════════════════════════════════════
+

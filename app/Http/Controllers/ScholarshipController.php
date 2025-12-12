@@ -15,7 +15,7 @@ class ScholarshipController extends Controller
     {
         $query = Scholarship::active()->notExpired()->with('university');
 
-        // Apply filters
+        // Apply filters from eligibility checker or search
         if ($request->filled('country')) {
             $query->forCountry($request->country);
         }
@@ -26,6 +26,20 @@ class ScholarshipController extends Controller
 
         if ($request->filled('coverage')) {
             $query->byCoverage($request->coverage);
+        }
+
+        // Handle amount range filter
+        if ($request->filled('amount_range')) {
+            $range = $request->amount_range;
+            if ($range === '0-5000') {
+                $query->where('amount', '<=', 5000);
+            } elseif ($range === '5000-10000') {
+                $query->whereBetween('amount', [5000, 10000]);
+            } elseif ($range === '10000-25000') {
+                $query->whereBetween('amount', [10000, 25000]);
+            } elseif ($range === '25000+') {
+                $query->where('amount', '>=', 25000);
+            }
         }
 
         if ($request->filled('search')) {
@@ -43,7 +57,7 @@ class ScholarshipController extends Controller
         
         if ($sortBy === 'amount') {
             $query->orderBy('amount', $sortOrder);
-        } elseif ($sortBy === 'deadline') {
+        } elseif ($sortBy === 'application_deadline' || $sortBy === 'deadline') {
             $query->orderBy('application_deadline', $sortOrder);
         } elseif ($sortBy === 'title') {
             $query->orderBy('title', $sortOrder);

@@ -118,7 +118,11 @@
                             <div class="mb-4">
                                 <span class="text-sm text-secondary-600">Tuition: </span>
                                 <span class="font-semibold text-green-600">
-                                    {{ number_format($university->tuition_fee_min) }} - {{ number_format($university->tuition_fee_max) }} {{ $university->currency }}
+                                    @if($university->tuition_fee_max)
+                                        {{ number_format($university->tuition_fee_min) }} - {{ number_format($university->tuition_fee_max) }} {{ $university->currency }}
+                                    @else
+                                        {{ number_format($university->tuition_fee_min) }} {{ $university->currency }}
+                                    @endif
                                 </span>
                             </div>
                             @endif

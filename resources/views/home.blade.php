@@ -32,7 +32,7 @@
                         Explore Universities
                     </a>
                     <a href="{{ route('scholarships.index') }}" 
-                       class="btn-secondary border-2 border-white text-white hover:bg-white hover:text-primary-600 text-lg px-10 py-4">
+                       class="btn-secondary bg-white text-primary-600 hover:bg-gray-50 text-lg px-10 py-4">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                         </svg>
@@ -296,21 +296,21 @@
                         </svg>
                         Complete Your Profile
                     </a>
+                    <a href="{{ route('scholarships.eligibility-check') }}" 
+                       class="btn-secondary bg-white text-primary-600 hover:bg-gray-50 text-lg px-10 py-4">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Check Eligibility
+                    </a>
                 @else
-                    <a href="{{ route('register') }}" class="btn-secondary bg-white text-primary-600 hover:bg-gray-50 text-lg px-10 py-4">
+                    <a href="{{ route('register') }}" class="btn-secondary bg-white text-primary-600 text-lg px-10 py-4">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                         </svg>
                         Get Started Free
                     </a>
                 @endauth
-                <a href="{{ route('scholarships.eligibility-check') }}" 
-                   class="btn-secondary border-2 border-white text-white hover:bg-white hover:text-primary-600 text-lg px-10 py-4">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Check Eligibility
-                </a>
             </div>
         </div>
         

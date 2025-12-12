@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white/90 backdrop-blur-md border-b border-secondary-200 shadow-soft sticky top-0 z-50">
+<nav x-data="{ open: false }" class="bg-white shadow-lg border-b-2 border-blue-100 sticky top-0 z-50">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
@@ -6,10 +6,13 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center group">
-                        <div class="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center mr-4 shadow-medium group-hover:shadow-strong transition-all duration-300 group-hover:scale-105">
-                            <span class="text-white font-bold text-xl">UC</span>
+                        <div class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                            <span class="text-white font-bold text-2xl">UC</span>
                         </div>
-                        <span class="text-2xl font-bold text-gradient-secondary">UniConnect</span>
+                        <div>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">UniConnect</span>
+                            <p class="text-xs text-gray-500 hidden lg:block -mt-1">Connecting Students Worldwide</p>
+                        </div>
                     </a>
                 </div>
 
@@ -24,11 +27,9 @@
                     <x-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.*')">
                         {{ __('Scholarships') }}
                     </x-nav-link>
-                    @auth
-                        <x-nav-link :href="route('networking.index')" :active="request()->routeIs('networking.*')">
-                            {{ __('Community') }}
-                        </x-nav-link>
-                    @endauth
+                    <x-nav-link :href="route('networking.index')" :active="request()->routeIs('networking.*')">
+                        {{ __('Community') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -121,11 +122,9 @@
             <x-responsive-nav-link :href="route('scholarships.index')" :active="request()->routeIs('scholarships.*')">
                 {{ __('Scholarships') }}
             </x-responsive-nav-link>
-            @auth
-                <x-responsive-nav-link :href="route('networking.index')" :active="request()->routeIs('networking.*')">
-                    {{ __('Community') }}
-                </x-responsive-nav-link>
-            @endauth
+            <x-responsive-nav-link :href="route('networking.index')" :active="request()->routeIs('networking.*')">
+                {{ __('Community') }}
+            </x-responsive-nav-link>
         </div>
 
         @auth
